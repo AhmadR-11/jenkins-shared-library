@@ -3,16 +3,11 @@ def call(Map config = [:]) {
     if (!config.projectKey) {
         error("runSonarScan step requires a 'projectKey' parameter.")
     }
-    if (!config.sonarToken) {
-        error("runSonarScan step requires a 'sonarToken' parameter.")
-    }
 
     echo "Initializing SonarQube Scanner for project: ${config.projectKey}..."
     
-    // We execute the shell command for the Sonar Scanner
-    // (This acts as a placeholder or standard command until Task 4's SonarQube server is fully booted)
-    sh """
-        echo "Running sonar-scanner with Project Key: ${config.projectKey}"
-        echo "Token provided securely."
-    """
+    // Automatically uses the SonarQube server and token we registered in Jenkins System settings!
+    withSonarQubeEnv('sonarqube-server') {
+        sh "npx sonar-scanner -Dsonar.projectKey=${config.projectKey} -Dsonar.sources=."
+    }
 }
